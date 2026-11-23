@@ -9,23 +9,55 @@
   <link rel="apple-touch-icon" href="real-company-logo-rca.png">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; padding-bottom: 40px; }
-    header { position: sticky; top: 0; background: #0f172a; padding: 16px; border-bottom: 1px solid #1e293b; z-index: 10; }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
-    .brand img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; }
-    #btnInstalar { background: #38bdf8; color: #0f172a; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; display: none; }
-    input[type="text"] { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; font-size: 15px; outline: none; }
-    input[type="text"]::placeholder { color: #94a3b8; }
-    main { padding: 16px; max-width: 600px; margin: 0 auto; }
-    h2 { font-size: 16px; color: #94a3b8; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .app-card { display: flex; align-items: center; background: #1e293b; padding: 14px; border-radius: 16px; margin-bottom: 12px; gap: 14px; }
+    body { background: #0f172a; color: #f8fafc; padding-bottom: 50px; }
+    header { position: sticky; top: 0; background: #0f172a; padding: 14px 16px 10px; border-bottom: 1px solid #1e293b; z-index: 10; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 6px; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; flex-shrink: 0; }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
+    .actions { display: flex; align-items: center; gap: 5px; }
+    .btn-header { background: #1e293b; color: #f8fafc; border: 1px solid #334155; padding: 7px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .btn-zoom { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+    #btnInstalar { background: #38bdf8; color: #0f172a; border: none; padding: 7px 11px; border-radius: 20px; font-weight: 700; font-size: 12px; display: none; }
+    .btn-icon-round { width: 34px; height: 34px; padding: 0; justify-content: center; border-radius: 50%; flex-shrink: 0; }
+    input[type="text"], input[type="url"], select { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; font-size: 15px; outline: none; font-family: inherit; }
+    input::placeholder { color: #94a3b8; }
+
+    /* Barra de Categorías deslizable */
+    .cat-bar { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
+    .cat-bar::-webkit-scrollbar { display: none; }
+    .cat-pill { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 7px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+    .cat-pill.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; font-weight: 700; }
+    .btn-add-cat { background: #0f172a; color: #38bdf8; border: 1px dashed #38bdf8; padding: 7px 12px; border-radius: 18px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+
+    main { padding: 16px; max-width: 600px; margin: 0 auto; transition: zoom 0.15s ease; }
+    .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    h2 { font-size: 15px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+    .app-card { display: flex; align-items: center; background: #1e293b; padding: 14px; border-radius: 16px; margin-bottom: 12px; gap: 12px; position: relative; }
     .app-icon { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; background: #334155; flex-shrink: 0; }
     .app-info { flex: 1; min-width: 0; }
     .app-title { font-weight: 700; font-size: 16px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-desc { font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
+    .app-desc { font-size: 13px; color: #94a3b8; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .app-meta { font-size: 11px; color: #38bdf8; font-weight: 600; }
-    .btn-get { background: #2563eb; color: white; text-decoration: none; padding: 9px 16px; border-radius: 20px; font-weight: 600; font-size: 13px; flex-shrink: 0; }
+    .card-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .btn-share-app { background: #0f172a; color: #94a3b8; border: 1px solid #334155; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .btn-get { background: #2563eb; color: white; text-decoration: none; padding: 9px 15px; border-radius: 20px; font-weight: 600; font-size: 13px; }
+    .btn-del { background: #ef4444; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; position: absolute; top: -6px; right: -6px; cursor: pointer; display: none; }
+    .edit-mode .btn-del { display: block; }
+
+    /* Paginación tipo Libro (50 por hoja) */
+    .libro-nav { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 12px 16px; border-radius: 14px; margin-top: 20px; border: 1px solid #334155; }
+    .btn-page { background: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; }
+    .btn-page:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .page-info { font-size: 13px; font-weight: 700; color: #cbd5e1; }
+
+    /* Ventanas emergentes */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: flex-end; justify-content: center; }
+    .modal-box { background: #1e293b; width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 24px 20px; }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; text-align: center; }
+    .form-group { margin-bottom: 10px; }
+    .form-group input, .form-group select { background: #0f172a; }
+    .btn-save { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #2563eb; color: white; font-weight: 700; font-size: 15px; margin-top: 6px; cursor: pointer; }
+    .btn-close { width: 100%; padding: 12px; border-radius: 12px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 14px; margin-top: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -35,46 +67,85 @@
         <img src="real-company-logo-rca.png" alt="Logo">
         <span>RCA Store</span>
       </div>
-      <button id="btnInstalar">Instalar App</button>
-    </div>
-    <input type="text" id="buscador" placeholder="Buscar aplicaciones..." onkeyup="filtrarApps()">
-  </header>
-  <main>
-    <h2>Destacadas</h2>
-    <div id="listaApps">
-      <div class="app-card">
-        <img src="real-company-logo-rca.png" class="app-icon" alt="App">
-        <div class="app-info">
-          <div class="app-title">Mi Primera App</div>
-          <div class="app-desc">Aplicación oficial de Real Company Argentina</div>
-          <div class="app-meta">★ 5.0 • Gratis</div>
-        </div>
-        <a href="https://google.com" target="_blank" class="btn-get">Abrir</a>
+      <div class="actions">
+        <button id="btnInstalar">Instalar</button>
+        <!-- Botones de Zoom para achicar o agrandar -->
+        <button class="btn-header btn-zoom" onclick="cambiarZoom(-0.1)" aria-label="Achicar vista">A-</button>
+        <button class="btn-header btn-zoom" onclick="cambiarZoom(0.1)" aria-label="Agrandar vista">A+</button>
+        <button class="btn-header" onclick="abrirAgregar()">+ App</button>
+        <button class="btn-header btn-icon-round" onclick="compartirEnlace(window.location.href, 'RCA Store')" aria-label="Compartir Tienda">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+        </button>
       </div>
     </div>
+    
+    <!-- Barra de búsqueda por nombre o categoría -->
+    <input type="text" id="buscador" placeholder="Buscar aplicación o categoría..." onkeyup="filtrarApps()">
+    
+    <!-- Carrusel de Categorías creadas por vos -->
+    <div class="cat-bar" id="barraCategorias"></div>
+  </header>
+
+  <main id="areaZoom">
+    <div class="sec-header">
+      <h2 id="contadorApps">Catálogo RCA</h2>
+      <button onclick="document.getElementById('listaApps').classList.toggle('edit-mode')" style="background: none; border: none; color: #38bdf8; font-size: 12px; font-weight: 600; cursor: pointer;">Editar lista</button>
+    </div>
+    
+    <div id="listaApps"></div>
+
+    <!-- Navegación tipo Libro (50 aplicaciones por hoja) -->
+    <div class="libro-nav">
+      <button class="btn-page" id="btnPrev" onclick="cambiarHoja(-1)">← Hoja anterior</button>
+      <span class="page-info" id="infoHoja">Hoja 1 de 1</span>
+      <button class="btn-page" id="btnNext" onclick="cambiarHoja(1)">Hoja siguiente →</button>
+    </div>
   </main>
+
+  <!-- Ventana para crear una categoría nueva -->
+  <div class="modal-bg" id="modalCategoria" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-box">
+      <div class="modal-title">Crear nueva categoría</div>
+      <div class="form-group">
+        <input type="text" id="nuevaCatNombre" placeholder="Nombre (ej: Inteligencia Artificial, Juegos, Chats)">
+      </div>
+      <button class="btn-save" onclick="guardarCategoria()">Crear Categoría</button>
+      <button class="btn-close" onclick="document.getElementById('modalCategoria').style.display='none'">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Ventana para pegar enlaces directos de tus aplicaciones -->
+  <div class="modal-bg" id="modalAgregar" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-box">
+      <div class="modal-title">Pegar nueva aplicación</div>
+      <div class="form-group">
+        <input type="text" id="appNombre" placeholder="Nombre de la aplicación">
+      </div>
+      <div class="form-group">
+        <select id="appCategoriaSelect"></select>
+      </div>
+      <div class="form-group">
+        <input type="text" id="appDesc" placeholder="Descripción corta">
+      </div>
+      <div class="form-group">
+        <input type="url" id="appUrl" placeholder="Pegá el enlace de la app (https://...)">
+      </div>
+      <div class="form-group">
+        <input type="url" id="appIcono" placeholder="Pegá el enlace de la imagen/logo">
+      </div>
+      <button class="btn-save" onclick="guardarApp()">Guardar en el Libro</button>
+      <button class="btn-close" onclick="document.getElementById('modalAgregar').style.display='none'">Cancelar</button>
+    </div>
+  </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
     let eventoInstalacion;
-    const btnInstalar = document.getElementById('btnInstalar');
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      eventoInstalacion = e;
-      btnInstalar.style.display = 'block';
-    });
-    btnInstalar.addEventListener('click', () => {
-      if (eventoInstalacion) eventoInstalacion.prompt();
-    });
-    function filtrarApps() {
-      const texto = document.getElementById('buscador').value.toLowerCase();
-      const tarjetas = document.querySelectorAll('.app-card');
-      tarjetas.forEach(card => {
-        const titulo = card.querySelector('.app-title').innerText.toLowerCase();
-        card.style.display = titulo.includes(texto) ? 'flex' : 'none';
-      });
-    }
-  </script>
-</body>
-</html>
