@@ -1,0 +1,20 @@
+{
+  "name": "RCA Store",
+  "short_name": "RCA Store",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "real-company-logo-rca.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "real-company-logo-rca.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
