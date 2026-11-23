@@ -1,151 +1,447 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>RCA Store</title>
-  <meta name="theme-color" content="#0f172a">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="real-company-logo-rca.png">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; padding-bottom: 50px; }
-    header { position: sticky; top: 0; background: #0f172a; padding: 14px 16px 10px; border-bottom: 1px solid #1e293b; z-index: 10; }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 6px; }
-    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; flex-shrink: 0; }
-    .brand img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
-    .actions { display: flex; align-items: center; gap: 5px; }
-    .btn-header { background: #1e293b; color: #f8fafc; border: 1px solid #334155; padding: 7px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    .btn-zoom { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 13px; flex-shrink: 0; }
-    #btnInstalar { background: #38bdf8; color: #0f172a; border: none; padding: 7px 11px; border-radius: 20px; font-weight: 700; font-size: 12px; display: none; }
-    .btn-icon-round { width: 34px; height: 34px; padding: 0; justify-content: center; border-radius: 50%; flex-shrink: 0; }
-    input[type="text"], input[type="url"], select { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; font-size: 15px; outline: none; font-family: inherit; }
-    input::placeholder { color: #94a3b8; }
+    :root {
+      --fucsia: #ff007f;
+      --verde: #00e676;
+      --rojo: #ff1744;
+      --azul: #2979ff;
+      --amarillo: #ffea00;
+      --negro: #0b0b0f;
+      --blanco: #ffffff;
+      --gris-card: #16161e;
+      --zoom-scale: 1;
+    }
 
-    /* Barra de Categorías deslizable */
-    .cat-bar { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-top: 10px; scrollbar-width: none; }
-    .cat-bar::-webkit-scrollbar { display: none; }
-    .cat-pill { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 7px 14px; border-radius: 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; }
-    .cat-pill.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; font-weight: 700; }
-    .btn-add-cat { background: #0f172a; color: #38bdf8; border: 1px dashed #38bdf8; padding: 7px 12px; border-radius: 18px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    main { padding: 16px; max-width: 600px; margin: 0 auto; transition: zoom 0.15s ease; }
-    .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    h2 { font-size: 15px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-    .app-card { display: flex; align-items: center; background: #1e293b; padding: 14px; border-radius: 16px; margin-bottom: 12px; gap: 12px; position: relative; }
-    .app-icon { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; background: #334155; flex-shrink: 0; }
-    .app-info { flex: 1; min-width: 0; }
-    .app-title { font-weight: 700; font-size: 16px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-desc { font-size: 13px; color: #94a3b8; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-meta { font-size: 11px; color: #38bdf8; font-weight: 600; }
-    .card-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .btn-share-app { background: #0f172a; color: #94a3b8; border: 1px solid #334155; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .btn-get { background: #2563eb; color: white; text-decoration: none; padding: 9px 15px; border-radius: 20px; font-weight: 600; font-size: 13px; }
-    .btn-del { background: #ef4444; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; position: absolute; top: -6px; right: -6px; cursor: pointer; display: none; }
-    .edit-mode .btn-del { display: block; }
+    body {
+      background-color: var(--negro);
+      color: var(--blanco);
+      min-height: 100vh;
+      padding-bottom: 90px;
+      overflow-x: hidden;
+    }
 
-    /* Paginación tipo Libro (50 por hoja) */
-    .libro-nav { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 12px 16px; border-radius: 14px; margin-top: 20px; border: 1px solid #334155; }
-    .btn-page { background: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; }
-    .btn-page:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-    .page-info { font-size: 13px; font-weight: 700; color: #cbd5e1; }
+    #app-wrapper {
+      transform: scale(var(--zoom-scale));
+      transform-origin: top center;
+      width: calc(100% / var(--zoom-scale));
+      transition: transform 0.15s ease;
+    }
 
-    /* Ventanas emergentes */
-    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: flex-end; justify-content: center; }
-    .modal-box { background: #1e293b; width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 24px 20px; }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; text-align: center; }
-    .form-group { margin-bottom: 10px; }
-    .form-group input, .form-group select { background: #0f172a; }
-    .btn-save { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #2563eb; color: white; font-weight: 700; font-size: 15px; margin-top: 6px; cursor: pointer; }
-    .btn-close { width: 100%; padding: 12px; border-radius: 12px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 14px; margin-top: 4px; cursor: pointer; }
+    /* ENCABEZADO SUPERIOR */
+    header {
+      background: linear-gradient(90deg, #111118 0%, #1c1024 100%);
+      border-bottom: 2px solid var(--fucsia);
+      padding: 14px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .store-title {
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--fucsia), var(--amarillo), var(--verde));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+
+    /* CONTROL - ZOOM + */
+    .zoom-box {
+      display: inline-flex;
+      align-items: center;
+      background: #1f1f2b;
+      border: 1px solid var(--azul);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .zoom-box button {
+      background: transparent;
+      border: none;
+      color: var(--amarillo);
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .zoom-box button:active {
+      background: var(--azul);
+      color: var(--blanco);
+    }
+
+    .zoom-box span {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blanco);
+      padding: 0 6px;
+      user-select: none;
+    }
+
+    /* ICONOS DE COMPARTIR */
+    .share-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .share-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--blanco);
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+
+    .share-icon:active {
+      transform: scale(0.9);
+    }
+
+    .sh-fb { background: #1877f2; }
+    .sh-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .sh-tt { background: #000000; border: 1px solid var(--fucsia); }
+    .sh-mail { background: var(--rojo); }
+    .sh-wa { background: #25d366; }
+    .sh-yui {
+      background: var(--fucsia);
+      font-weight: 900;
+      font-size: 1rem;
+      border: 1px solid var(--amarillo);
+    }
+
+    .admin-toggle {
+      background: transparent;
+      border: 1px solid #333;
+      color: #888;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .admin-toggle.unlocked {
+      border-color: var(--verde);
+      color: var(--verde);
+    }
+
+    /* BARRA DE BUSQUEDA */
+    .search-section {
+      padding: 14px 16px 6px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      color: var(--fucsia);
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border-radius: 10px;
+      border: 2px solid var(--azul);
+      background: #14141c;
+      color: var(--blanco);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    #search-input:focus {
+      border-color: var(--fucsia);
+    }
+
+    /* BARRA DE INFO DE PAGINA Y EXPORTAR */
+    .status-bar {
+      max-width: 1100px;
+      margin: 8px auto 0;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #bbb;
+    }
+
+    .btn-export {
+      background: var(--verde);
+      color: var(--negro);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* CUADRICULA DE APLICACIONES */
+    .apps-grid {
+      max-width: 1100px;
+      margin: 14px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .app-card {
+      background: var(--gris-card);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #262636;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      aspect-ratio: 1 / 1.18;
+    }
+
+    /* TARJETA CON FOTO COMPLETA */
+    .app-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #1e1e2a;
+    }
+
+    .app-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 15%, rgba(0, 0, 0, 0.1) 60%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px;
+    }
+
+    .app-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--blanco);
+      margin-bottom: 6px;
+      text-shadow: 0 1px 4px #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-download {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--verde);
+      color: var(--negro);
+      font-weight: 900;
+      font-size: 0.85rem;
+      padding: 7px 6px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-download:active {
+      background: var(--amarillo);
+    }
+
+    .btn-delete-app {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: var(--rojo);
+      color: var(--blanco);
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 5;
+      display: none;
+    }
+
+    /* CUADRADO VACIO CON SIGNO + (SOLO DUENO) */
+    .add-slot {
+      border: 2px dashed var(--fucsia);
+      background: #13131b;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .add-slot:active {
+      background: #221324;
+    }
+
+    .plus-sign {
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--fucsia);
+      line-height: 1;
+    }
+
+    .add-label {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    /* BOTON FLOTANTE ABAJO A LA DERECHA PARA SEGUIR AGREGANDO CONTINUAMENTE */
+    .next-page-fab {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: linear-gradient(135deg, var(--fucsia), var(--azul));
+      color: var(--blanco);
+      border: 2px solid var(--amarillo);
+      border-radius: 50px;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(255, 0, 127, 0.5);
+      cursor: pointer;
+      z-index: 200;
+    }
+
+    .prev-page-fab {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      background: #1d1d29;
+      color: var(--blanco);
+      border: 1px solid var(--azul);
+      border-radius: 50px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      z-index: 200;
+      display: none;
+    }
+
+    /* VENTANA MODAL PARA PEGAR ENLACE Y FOTO */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 500;
+    }
+
+    .modal-box {
+      background: #171722;
+      border: 2px solid var(--fucsia);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 400px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-box h3 {
+      color: var(--amarillo);
+      font-size: 1.2rem;
+    }
+
+    .modal-box label {
+      font-size: 0.85rem;
+      color: #ccc;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .modal-box input[type="text"],
+    .modal-box input[type="url"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--azul);
+      background: #0e0e14;
+      color: var(--blanco);
+      font-size: 0.95rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-save { background: var(--verde); color: var(--negro); }
+    .btn-cancel { background: var(--rojo); color: var(--blanco); }
   </style>
 </head>
 <body>
+
+<div id="app-wrapper">
+  <!-- ENCABEZADO -->
   <header>
-    <div class="top-bar">
-      <div class="brand">
-        <img src="real-company-logo-rca.png" alt="Logo">
-        <span>RCA Store</span>
-      </div>
-      <div class="actions">
-        <button id="btnInstalar">Instalar</button>
-        <!-- Botones de Zoom para achicar o agrandar -->
-        <button class="btn-header btn-zoom" onclick="cambiarZoom(-0.1)" aria-label="Achicar vista">A-</button>
-        <button class="btn-header btn-zoom" onclick="cambiarZoom(0.1)" aria-label="Agrandar vista">A+</button>
-        <button class="btn-header" onclick="abrirAgregar()">+ App</button>
-        <button class="btn-header btn-icon-round" onclick="compartirEnlace(window.location.href, 'RCA Store')" aria-label="Compartir Tienda">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Barra de búsqueda por nombre o categoría -->
-    <input type="text" id="buscador" placeholder="Buscar aplicación o categoría..." onkeyup="filtrarApps()">
-    
-    <!-- Carrusel de Categorías creadas por vos -->
-    <div class="cat-bar" id="barraCategorias"></div>
-  </header>
+    <div class="brand-row">
+      <div class="store-title">RCA Store</div>
 
-  <main id="areaZoom">
-    <div class="sec-header">
-      <h2 id="contadorApps">Catálogo RCA</h2>
-      <button onclick="document.getElementById('listaApps').classList.toggle('edit-mode')" style="background: none; border: none; color: #38bdf8; font-size: 12px; font-weight: 600; cursor: pointer;">Editar lista</button>
-    </div>
-    
-    <div id="listaApps"></div>
-
-    <!-- Navegación tipo Libro (50 aplicaciones por hoja) -->
-    <div class="libro-nav">
-      <button class="btn-page" id="btnPrev" onclick="cambiarHoja(-1)">← Hoja anterior</button>
-      <span class="page-info" id="infoHoja">Hoja 1 de 1</span>
-      <button class="btn-page" id="btnNext" onclick="cambiarHoja(1)">Hoja siguiente →</button>
-    </div>
-  </main>
-
-  <!-- Ventana para crear una categoría nueva -->
-  <div class="modal-bg" id="modalCategoria" onclick="if(event.target===this) this.style.display='none'">
-    <div class="modal-box">
-      <div class="modal-title">Crear nueva categoría</div>
-      <div class="form-group">
-        <input type="text" id="nuevaCatNombre" placeholder="Nombre (ej: Inteligencia Artificial, Juegos, Chats)">
-      </div>
-      <button class="btn-save" onclick="guardarCategoria()">Crear Categoría</button>
-      <button class="btn-close" onclick="document.getElementById('modalCategoria').style.display='none'">Cancelar</button>
-    </div>
-  </div>
-
-  <!-- Ventana para pegar enlaces directos de tus aplicaciones -->
-  <div class="modal-bg" id="modalAgregar" onclick="if(event.target===this) this.style.display='none'">
-    <div class="modal-box">
-      <div class="modal-title">Pegar nueva aplicación</div>
-      <div class="form-group">
-        <input type="text" id="appNombre" placeholder="Nombre de la aplicación">
-      </div>
-      <div class="form-group">
-        <select id="appCategoriaSelect"></select>
-      </div>
-      <div class="form-group">
-        <input type="text" id="appDesc" placeholder="Descripción corta">
-      </div>
-      <div class="form-group">
-        <input type="url" id="appUrl" placeholder="Pegá el enlace de la app (https://...)">
-      </div>
-      <div class="form-group">
-        <input type="url" id="appIcono" placeholder="Pegá el enlace de la imagen/logo">
-      </div>
-      <button class="btn-save" onclick="guardarApp()">Guardar en el Libro</button>
-      <button class="btn-close" onclick="document.getElementById('modalAgregar').style.display='none'">Cancelar</button>
-    </div>
-  </div>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-    let eventoInstalacion;
+      <!-- CONTROL - ZOOM + -->
+      <div class="zoom-box" title="Ajustar tamaño">
+        <button type="button" onclick="cambiarZoom(-0.1)">−</button>
+        <span>zoom</span>
